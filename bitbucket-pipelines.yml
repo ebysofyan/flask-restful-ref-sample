@@ -1,0 +1,96 @@
+image: python:3.8.2
+
+pipelines:
+  custom:
+    deploy-to-production:
+      - step:
+          name: Deploy To quokkahr.com
+          deployment: production
+          caches:
+            - pip
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: $PRODUCTION_USER
+                SERVER: $PRODUCTION_MASTER_SERVER_ADDRESS
+                COMMAND: "sh ~/deployment-script.sh"
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: $PRODUCTION_USER
+                SERVER: $PRODUCTION_WORKER_SERVER_ADDRESS
+                COMMAND: "sh ~/deployment-script.sh"
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: $PRODUCTION_USER
+                SERVER: $PRODUCTION_SCHEDULER_SERVER_ADDRESS
+                COMMAND: "sh ~/deployment-script.sh"
+
+    deploy-to-staging:
+      - step:
+          name: Deploy to staging.quokkahr.com
+          deployment: staging
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: "ubuntu"
+                SERVER: $STAGING_SERVER_ADDRESS
+                COMMAND: "sh ~/deployment-script.sh"
+
+  pull-requests:
+    dev:
+      - step:
+          name: Run test on pull request target to dev branch
+          caches:
+            - pip
+          services:
+            - postgres
+          script:
+            - cp ./.env-local ./.env
+            - export TEST_DB_URL=postgresql://postgres@127.0.0.1:5432/quokka-v2-test
+            - pip install -r requirements.txt
+            - make run-test_api
+
+  branches:
+    staging:
+      - step:
+          name: Run test before deploy to staging
+          caches:
+            - pip
+          services:
+            - postgres
+          script:
+            - cp ./.env-local ./.env
+            - export TEST_DB_URL=postgresql://postgres@127.0.0.1:5432/quokka-v2-test
+            - pip install -r requirements.txt
+            # - make run-test_api
+
+      - step:
+          name: Deploy to staging.quokkahr.com
+          deployment: staging
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: "ubuntu"
+                SERVER: $STAGING_SERVER_ADDRESS
+                COMMAND: "sh ~/deployment-script.sh"
+
+    qa-playground:
+      - step:
+          name: Deploy to qa-playground.quokkahr.com
+          deployment: staging
+          script:
+            - pipe: atlassian/ssh-run:0.3.1
+              variables:
+                SSH_USER: "ubuntu"
+                SERVER: $STAGING_SERVER_ADDRESS
+                COMMAND: "sh ~/deployment-script.sh"
+
+definitions:
+  services:
+    postgres:
+      image: postgres:13.4
+      environment:
+        POSTGRES_DB: quokka-v2-test
+        POSTGRES_USER: postgres
+        DATABASE_URL: postgresql://postgres@127.0.0.1:5432/quokka-v2-test
+        POSTGRES_HOST_AUTH_METHOD: trust

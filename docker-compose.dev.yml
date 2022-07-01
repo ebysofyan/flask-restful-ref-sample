@@ -1,0 +1,57 @@
+version: '3.3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/quokka-backend-core/
+    env_file:
+      - .env
+    command: gunicorn --workers ${GUNICORN_WORKER} -b :5000 movie_api.wsgi:app
+    networks:
+      - app_network
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+    command: make run-celery
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - app_network
+  db:
+    image: bitnami/postgresql:14
+    ports:
+      - "5434:5432"
+    networks:
+      - app_network
+    volumes:
+      - postgresql_data:/bitnami/postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=movie-sample
+  redis-master:
+    image: bitnami/redis:latest
+    environment:
+      - REDIS_PASSWORD=yourRedisPassword
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/bitnami/redis
+    networks:
+      - app_network
+volumes:
+  postgresql_data:
+  redis_data:
+  celery:
+  app:
+networks:
+  app_network:

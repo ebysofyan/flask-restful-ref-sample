@@ -1,0 +1,71 @@
+display_information:
+  name: Quokka HR Dev
+  description: An App for Development purpose
+  background_color: "#545254"
+features:
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  bot_user:
+    display_name: Quokka HR Dev
+    always_online: true
+  shortcuts:
+    - name: Give Feedback
+      type: global
+      callback_id: view_give_feedback_handle_submission
+      description: Give feedback to your colleague
+    - name: Give Praise
+      type: global
+      callback_id: view_give_praise_handle_submission
+      description: Give praise to your colleague
+    - name: Request Feedback
+      type: global
+      callback_id: view_request_feedback_handle_submission
+      description: Request feedback from your colleague
+oauth_config:
+  redirect_urls:
+    - https://e677-182-1-122-218.ap.ngrok.io/integrations/slack/oauth-redirect
+  scopes:
+    user:
+      - chat:write
+      - reactions:write
+      - channels:write
+    bot:
+      - app_mentions:read
+      - channels:join
+      - channels:manage
+      - chat:write
+      - chat:write.customize
+      - chat:write.public
+      - commands
+      - groups:history
+      - im:history
+      - im:read
+      - im:write
+      - links:write
+      - reactions:write
+      - users.profile:read
+      - users:read
+      - users:read.email
+      - users:write
+      - channels:read
+settings:
+  event_subscriptions:
+    request_url: https://e677-182-1-122-218.ap.ngrok.io/integrations/slack/events
+    user_events:
+      - message.app_home
+    bot_events:
+      - app_home_opened
+      - app_mention
+      - app_uninstalled
+      - message.groups
+      - message.im
+      - tokens_revoked
+  interactivity:
+    is_enabled: true
+    request_url: https://e677-182-1-122-218.ap.ngrok.io/integrations/slack/interactions
+    message_menu_options_url: https://e677-182-1-122-218.ap.ngrok.io/integrations/slack/external-options
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

@@ -1,0 +1,23 @@
+FROM python:3.8-slim
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apt update && apt install -y python3 python3-dev make nano\
+    default-libmysqlclient-dev libtiff5-dev libjpeg62-turbo-dev \
+    zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev gcc g++ libmagic-dev
+
+COPY requirements.txt /app/
+
+WORKDIR /app
+RUN pip install --upgrade pip --no-cache-dir
+RUN pip install -r requirements.txt --use-feature=2020-resolver
+RUN pip install gunicorn
+
+RUN mkdir /root/.aws
+ADD .aws/ /root/.aws
+
+COPY .env /app/
+COPY . /app/
+
+EXPOSE 5000
