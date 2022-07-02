@@ -14,8 +14,8 @@ RUN pip install --upgrade pip --no-cache-dir
 RUN pip install -r requirements.txt --use-feature=2020-resolver
 RUN pip install gunicorn
 
-RUN mkdir /root/.aws
-ADD .aws/ /root/.aws
+#RUN mkdir /root/.aws
+#ADD .aws/ /root/.aws
 
 COPY .env /app/
 COPY . /app/
