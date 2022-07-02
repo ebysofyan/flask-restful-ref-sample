@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.staging
+      dockerfile: Dockerfile.dev
     ports:
       - "5000:5000"
     volumes:
@@ -16,7 +16,7 @@ services:
   celery:
     build:
       context: .
-      dockerfile: Dockerfile.staging
+      dockerfile: Dockerfile.dev
     command: make run-celery
     volumes:
       - .:/app
@@ -38,7 +38,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres123
       - POSTGRES_DB=movie-sample
-  redis-master:
+  redis:
     image: bitnami/redis:latest
     environment:
       - REDIS_PASSWORD=yourRedisPassword
