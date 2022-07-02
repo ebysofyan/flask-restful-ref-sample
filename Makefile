@@ -20,3 +20,9 @@ run-migration:
 	flask db stamp head
 	flask db migrate
 	flask db upgrade
+
+run-migration-first-time:
+	flask db init
+	flask db stamp head
+	flask db migrate
+	flask db upgrade
