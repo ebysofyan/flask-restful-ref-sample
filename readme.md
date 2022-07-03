@@ -33,11 +33,11 @@ pip install -r requirements.txt --use-feature=2020-resolver
 2. Normal run, for dev purpose
 
 ```
-docker-compose -f docker-compose.dev.yml up --build
+docker compose -f docker-compose.dev.yml up --build
 ```
 
 3. Or running in background
 
 ```
-docker-compose -f docker-compose.dev.yml up --build -d
+docker compose -f docker-compose.dev.yml up --build -d
 ```
