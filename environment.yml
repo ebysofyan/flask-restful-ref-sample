@@ -37,6 +37,8 @@ dependencies:
   - wheel=0.34.2
   - xz=5.2.4
   - zlib=1.2.11
+  - python-graphviz==0.19.1
+  - pip==22.1.2
   - pip:
     - aiohttp==3.8.1
     - aioredis==2.0.1
